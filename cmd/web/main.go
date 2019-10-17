@@ -5,21 +5,21 @@ import (
 	"net/http"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
 
-	w.Write([]byte("Hello from Snippetbox"))
-}
 func main() {
 	mux := http.NewServeMux()
-	
+
 	mux.HandleFunc("/", home)
-    mux.HandleFunc("/snippet", showSnippet)
+	mux.HandleFunc("/snippet", showSnippet)
 	mux.HandleFunc("/snippet/create", createSnippet)
-	
+
+	fileServer := http.FileServer(http.Dir("./ui/static/"))
+
+	// Use the mux.Handle() function to register the file server as the handler for
+	// all URL paths that start with "/static/". For matching paths, we strip the
+	// "/static" prefix before the request reaches the file server.
+	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
+
 	log.Println("Starting on port 4000")
 	err := http.ListenAndServe(":4000", mux)
 	log.Fatal(err)
