@@ -2,11 +2,10 @@ package main
 
 import (
 	"html/template"
-	"log"
 	"net/http"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
@@ -19,28 +18,27 @@ func home(w http.ResponseWriter, r *http.Request) {
 	}
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
+		app.serverError(w, err)
 		return
 	}
 	err = ts.Execute(w, nil)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "Internal Server Error", 500)
+		app.serverError(w, err)
 		return
 	}
 }
 
-func showSnippet(w http.ResponseWriter, r *http.Request) {
+func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-        http.NotFound(w, r)
-        return
+		app.notFound(w)
+		return
 	}
 }
 
-func createSnippet(w http.ResponseWriter, r *http.Request) {
+func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		w.Header().Set("Allow", "POST")
-		http.Error(w, "Method Not Allowed", 405)
+		app.clientError(w, 405)
 		return
 	}
 

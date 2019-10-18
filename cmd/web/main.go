@@ -3,24 +3,27 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 )
 
+type application struct {
+	errorLog *log.Logger
+	infoLog  *log.Logger
+}
+
+var (
+	errorLog = log.New(os.Stderr, "ERROR \t", log.Ldate|log.Ltime)
+	infoLog  = log.New(os.Stdout, "INFO \t", log.Ldate|log.Ltime)
+)
 
 func main() {
-	mux := http.NewServeMux()
+	// Initialize a new instance of application containing the dependencies.
+	app := application{
+		errorLog: errorLog,
+		infoLog:  infoLog,
+	}
 
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet", showSnippet)
-	mux.HandleFunc("/snippet/create", createSnippet)
-
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-
-	// Use the mux.Handle() function to register the file server as the handler for
-	// all URL paths that start with "/static/". For matching paths, we strip the
-	// "/static" prefix before the request reaches the file server.
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-
-	log.Println("Starting on port 4000")
-	err := http.ListenAndServe(":4000", mux)
-	log.Fatal(err)
+	app.infoLog.Println("Starting on port 4000")
+	err := http.ListenAndServe(":4000", app.routes())
+	app.errorLog.Fatal(err)
 }
