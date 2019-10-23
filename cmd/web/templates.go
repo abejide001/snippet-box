@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"path/filepath"
 
+	"alexedwards.net/snippetbox/pkg/forms"
 	"alexedwards.net/snippetbox/pkg/models"
 )
 
@@ -14,6 +15,7 @@ import (
 type templateData struct {
 	Snippet  *models.Snippet
 	Snippets []*models.Snippet
+	Form     *forms.Form
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {
