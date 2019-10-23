@@ -25,7 +25,7 @@ var (
 )
 
 func main() {
-	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name")
+	dsn := flag.String("dsn", os.Getenv("DATABASE"), "MySQL data source name")
 	db, err := openDB(*dsn)
 	if err != nil {
 		errorLog.Fatal(err)
