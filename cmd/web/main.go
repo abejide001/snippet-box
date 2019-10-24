@@ -17,6 +17,7 @@ type application struct {
 	infoLog       *log.Logger
 	snippets      *mysql.SnippetModel
 	templateCache map[string]*template.Template
+	users         *mysql.UserModel
 }
 
 var (
@@ -34,8 +35,8 @@ func main() {
 	// Initialize a new template cache...
 	templateCache, err := newTemplateCache("./ui/html/")
 	if err != nil {
-        errorLog.Fatal(err)
-    }
+		errorLog.Fatal(err)
+	}
 	if err != nil {
 		errorLog.Fatal(err)
 	}
@@ -43,9 +44,9 @@ func main() {
 
 	// Initialize a new instance of application containing the dependencies.
 	app := application{
-		errorLog: errorLog,
-		infoLog:  infoLog,
-		snippets: &mysql.SnippetModel{DB: db},
+		errorLog:      errorLog,
+		infoLog:       infoLog,
+		snippets:      &mysql.SnippetModel{DB: db},
 		templateCache: templateCache,
 	}
 
